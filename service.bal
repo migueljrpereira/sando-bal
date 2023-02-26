@@ -10,19 +10,49 @@ service /sandwich on new http:Listener(9090) {
         return "Hello, Sando-bal here!";
     }
 
-    resource function get list() returns Sandwich[]|error{
+    resource function get list() returns Sandwich[]|error {
         return sandoCache.toArray();
-    } 
+    }
+
+    resource function get .(string sandoName) returns Sandwich|http:NotFound|error {
+        if (sandoCache.hasKey(sandoName)) {
+            return sandoCache.get(sandoName);
+        }
+        return http:NOT_FOUND;
+    }
+
+    resource function post .(@http:Payload Sandwich newSando) returns http:Created|http:BadRequest|error {
+
+        if (sandoCache.hasKey(newSando.designation)) {
+            return http:BAD_REQUEST;
+        }
+
+        sandoCache.add(newSando);
+
+        return http:CREATED;
+    }
+}
+
+service /ingredient on new http:Listener(9091) {
+    resource function get list() returns Ingredient[]|error {
+        return ingredientsCache.toArray();
+    }
+
+    resource function get .(string ingName) returns Ingredient|http:NotFound|error {
+        if (ingredientsCache.hasKey(ingName)) {
+            return ingredientsCache.get(ingName);
+        }
+        return http:NOT_FOUND;
+    }
 }
 
 public final table<Sandwich> key(designation) sandoCache = table [
-    {designation: "mista", descriptions: [[en, "CheeseHam Sandwich"], [pt,"Sande mista"]], ingredients: [ingredientsCache.get("queijo"), ingredientsCache.get("fiambre")], sellPrice: 2.5}];
-
+    {designation: "mista", descriptions: [[en, "CheeseHam Sandwich"], [pt, "Sande mista"]], ingredients: [ingredientsCache.get("queijo"), ingredientsCache.get("fiambre")], sellPrice: 2.5}];
 
 public final table<Ingredient> key(designation) ingredientsCache = table [
-    { designation: "queijo"},
-    { designation: "fiambre"},
-    { designation: "tomate"}
+    {designation: "queijo"},
+    {designation: "fiambre"},
+    {designation: "tomate"}
 ];
 
 public type Sandwich record {|
