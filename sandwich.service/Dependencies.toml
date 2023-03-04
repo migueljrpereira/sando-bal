@@ -33,7 +33,7 @@ dependencies = [
 [[package]]
 org = "ballerina"
 name = "cloud"
-version = "2.4.2"
+version = "2.4.3"
 modules = [
 	{org = "ballerina", packageName = "cloud", moduleName = "cloud"}
 ]
@@ -312,18 +312,27 @@ modules = [
 ]
 
 [[package]]
-org = "miguel"
-name = "sando_bal"
+org = "migueljrpereira"
+name = "sandobal.domain"
+version = "0.1.0"
+modules = [
+	{org = "migueljrpereira", packageName = "sandobal.domain", moduleName = "sandobal.domain"}
+]
+
+[[package]]
+org = "migueljrpereira"
+name = "sandobal.sandwichservice"
 version = "0.1.0"
 dependencies = [
 	{org = "ballerina", name = "cloud"},
 	{org = "ballerina", name = "http"},
 	{org = "ballerina", name = "io"},
 	{org = "ballerina", name = "test"},
-	{org = "ballerinai", name = "observe"}
+	{org = "ballerinai", name = "observe"},
+	{org = "migueljrpereira", name = "sandobal.domain"}
 ]
 modules = [
-	{org = "miguel", packageName = "sando_bal", moduleName = "sando_bal"}
+	{org = "migueljrpereira", packageName = "sandobal.sandwichservice", moduleName = "sandobal.sandwichservice"}
 ]
 
 

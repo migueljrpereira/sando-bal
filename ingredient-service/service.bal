@@ -1,38 +1,5 @@
 import ballerina/http;
 
-# A service representing a network-accessible API
-# bound to port `9090`.
-service /sandwich on new http:Listener(9090) {
-
-    # A resource for testing upstream connection
-    # + return - simple response
-    resource function get test() returns string|error {
-        return "Hello, Sando-bal here!";
-    }
-
-    resource function get list() returns Sandwich[]|error {
-        return sandoCache.toArray();
-    }
-
-    resource function get .(string sandoName) returns Sandwich|http:NotFound|error {
-        if (sandoCache.hasKey(sandoName)) {
-            return sandoCache.get(sandoName);
-        }
-        return http:NOT_FOUND;
-    }
-
-    resource function post .(@http:Payload Sandwich newSando) returns http:Created|http:BadRequest|error {
-
-        if (sandoCache.hasKey(newSando.designation)) {
-            return http:BAD_REQUEST;
-        }
-
-        sandoCache.add(newSando);
-
-        return http:CREATED;
-    }
-}
-
 service /ingredient on new http:Listener(9091) {
     resource function get list() returns Ingredient[]|error {
         return ingredientsCache.toArray();

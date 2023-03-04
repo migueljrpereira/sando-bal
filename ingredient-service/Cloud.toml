@@ -1,0 +1,7 @@
+[container.image]
+repository="migueljrpereira" # Docker hub name
+name="sandobal-ingredient-ms" # container name
+tag="latest"
+
+[settings]
+buildImage=true # you can make this false if you don't want to build the image and you just need the Dockerfile
