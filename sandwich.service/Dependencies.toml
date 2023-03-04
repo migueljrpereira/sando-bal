@@ -314,7 +314,7 @@ modules = [
 [[package]]
 org = "migueljrpereira"
 name = "sandobal.domain"
-version = "0.1.0"
+version = "0.1.2"
 modules = [
 	{org = "migueljrpereira", packageName = "sandobal.domain", moduleName = "sandobal.domain"}
 ]
