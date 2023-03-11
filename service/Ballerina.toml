@@ -1,0 +1,5 @@
+[package]
+org = "miguel"
+name = "sandobal.service"
+version = "0.1.0"
+distribution = "2201.3.2"

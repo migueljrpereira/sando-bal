@@ -1,9 +1,6 @@
 import ballerina/http;
-import migueljrpereira/sandobal.domain as domain;
+import migueljrpereira/sandobal.domain;
 
-
-# A service representing a network-accessible API
-# bound to port `9090`.
 service /sandwich on new http:Listener(2020) {
 
     # Description
@@ -12,9 +9,9 @@ service /sandwich on new http:Listener(2020) {
         return domain:sandoCache.toArray();
     }
 
-    resource function get .(string sandoName) returns domain:Sandwich|http:NotFound|error {
-        if (domain:sandoCache.hasKey(sandoName)) {
-            return domain:sandoCache.get(sandoName);
+    resource function get .(string name) returns domain:Sandwich|http:NotFound|error {
+        if (domain:sandoCache.hasKey(name)) {
+            return domain:sandoCache.get(name);
         }
         return http:NOT_FOUND;
     }

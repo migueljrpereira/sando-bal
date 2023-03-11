@@ -321,7 +321,7 @@ modules = [
 
 [[package]]
 org = "migueljrpereira"
-name = "sandobal.sandwichservice"
+name = "sandobal_api_ingredient"
 version = "0.1.0"
 dependencies = [
 	{org = "ballerina", name = "cloud"},
@@ -332,7 +332,7 @@ dependencies = [
 	{org = "migueljrpereira", name = "sandobal.domain"}
 ]
 modules = [
-	{org = "migueljrpereira", packageName = "sandobal.sandwichservice", moduleName = "sandobal.sandwichservice"}
+	{org = "migueljrpereira", packageName = "sandobal_api_ingredient", moduleName = "sandobal_api_ingredient"}
 ]
 
 

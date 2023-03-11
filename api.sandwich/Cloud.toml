@@ -1,6 +1,6 @@
 [container.image]
 repository="migueljrpereira" # Docker hub name
-name="sandobal-ingredient-ms" # container name
+name="sandobal-api-sandwich" # container name
 tag="latest"
 
 [settings]

@@ -313,17 +313,26 @@ modules = [
 
 [[package]]
 org = "migueljrpereira"
-name = "ingredient_service"
+name = "sandobal.domain"
+version = "0.1.2"
+modules = [
+	{org = "migueljrpereira", packageName = "sandobal.domain", moduleName = "sandobal.domain"}
+]
+
+[[package]]
+org = "migueljrpereira"
+name = "sandobal_sandwich_api"
 version = "0.1.0"
 dependencies = [
 	{org = "ballerina", name = "cloud"},
 	{org = "ballerina", name = "http"},
 	{org = "ballerina", name = "io"},
 	{org = "ballerina", name = "test"},
-	{org = "ballerinai", name = "observe"}
+	{org = "ballerinai", name = "observe"},
+	{org = "migueljrpereira", name = "sandobal.domain"}
 ]
 modules = [
-	{org = "migueljrpereira", packageName = "ingredient_service", moduleName = "ingredient_service"}
+	{org = "migueljrpereira", packageName = "sandobal_sandwich_api", moduleName = "sandobal_sandwich_api"}
 ]
 
 
