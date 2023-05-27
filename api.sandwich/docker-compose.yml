@@ -1,0 +1,31 @@
+version: '3.3'
+services:
+  # API IMAGE DEFINITION
+  sando-ms:
+    container_name: sandwich-api
+    image: sandobal-api-sandwich:latest
+    build:
+      context: target/docker/sandobal_sandwich_api/
+      dockerfile: Dockerfile
+    ports:
+      - 2020:2020
+    restart: always
+    links:
+      - sando-db
+    depends_on:
+      - sando-db
+  # DATABASE POSTGRES IMAGE DEFINITION
+  sando-db:
+    container_name: sandwich-data
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - 2029:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=sandwich
+    volumes:
+      - sando-db:/var/lib/postgresql/data
+volumes:
+  sando-db:

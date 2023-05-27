@@ -2,9 +2,8 @@
 org = "migueljrpereira"
 name = "sandobal_sandwich_api"
 version = "0.1.0"
-distribution = "2201.3.2"
+distribution = "2201.5.0"
 
 [build-options]
-observabilityIncluded = true
 cloud="docker"
 
