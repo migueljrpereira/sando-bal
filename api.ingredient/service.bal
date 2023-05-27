@@ -1,15 +1,22 @@
 import ballerina/http;
-import migueljrpereira/sandobal.domain;
 
-service /ingredient on new http:Listener(3030) {
-    resource function get list() returns domain:Ingredient[]|error {
-        return domain:ingredientsCache.toArray();
+service /ingredient on new http:Listener(2030) {
+    resource isolated function get .() returns Ingredient[]|error {
+        return check getAllIngredients();
     }
 
-    resource function get .(string ingName) returns domain:Ingredient|http:NotFound|error {
-        if (domain:ingredientsCache.hasKey(ingName)) {
-            return domain:ingredientsCache.get(ingName);
-        }
-        return http:NOT_FOUND;
+    resource isolated function get [int ingredient_id]() returns Ingredient?|error {
+        return check getIngredient(ingredient_id);
+    }
+
+    resource isolated function post .(Ingredient ingredient) returns int|error {
+        return check createIngredient(ingredient);
+    }
+
+    resource isolated function get init() returns boolean|error? {
+        _ = createTable();
+        _ = check bootstrap();
+
+        return true;
     }
 }

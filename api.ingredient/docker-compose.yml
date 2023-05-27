@@ -1,0 +1,31 @@
+version: '3.3'
+services:
+  # API IMAGE DEFINITION
+  ingredient_ms:
+    container_name: ingredient-api
+    image: sandobal-api-ingredient:latest
+    build:
+      context: target/docker/sandobal_ingredient_api/
+      dockerfile: Dockerfile
+    ports:
+      - 2030:2030
+    restart: always
+    links:
+      - ingredient_db
+    depends_on:
+      - ingredient_db
+  # DATABASE POSTGRES IMAGE DEFINITION
+  ingredient_db:
+    container_name: ingredient-data
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - 2039:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=ingredient
+    volumes:
+      - ingredient_db:/var/lib/postgresql/data
+volumes:
+  ingredient_db:
