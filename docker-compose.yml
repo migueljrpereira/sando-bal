@@ -1,0 +1,57 @@
+version: '3.3'
+services:
+  # # SANDWICH SERVICE _____________
+  sando-ms:
+    container_name: sandwich-api
+    image: sandobal-api-sandwich:latest
+    build:
+      context: api.sandwich/target/docker/sandobal_sandwich_api/
+      dockerfile: Dockerfile
+    ports:
+      #- 2020:2020
+    restart: always
+    links:
+      - sando-db
+    depends_on:
+      - sando-db
+  sando-db:
+    container_name: sandwich-data
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - 2029:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=sandwich
+    volumes:
+      - sando-db:/var/lib/postgresql/data
+  # # INGREDIENT SERVICE _____________
+  ingredient_ms:
+    container_name: ingredient-api
+    image: sandobal-api-ingredient:latest
+    build:
+      context: api.ingredient/target/docker/sandobal_ingredient_api/
+      dockerfile: Dockerfile
+    ports:
+      # - 2030:2030
+    restart: always
+    links:
+      - ingredient_db
+    depends_on:
+      - ingredient_db
+  ingredient_db:
+    container_name: ingredient-data
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - 2039:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=ingredient
+    volumes:
+      - ingredient_db:/var/lib/postgresql/data
+volumes:
+  sando-db:
+  ingredient_db:

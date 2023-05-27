@@ -54,3 +54,8 @@ gradle-app.setting
 
 # code coverage reports
 /.jacoco
+
+# other
+/.protos_backup
+/.protos
+package-lock.json
