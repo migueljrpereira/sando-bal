@@ -1,0 +1,329 @@
+openapi: 3.0.1
+info:
+  title: Sandwich
+  version: 0.1.0
+servers:
+- url: "{server}:{port}/sandwich"
+  variables:
+    server:
+      default: http://localhost
+    port:
+      default: "2020"
+paths:
+  /:
+    get:
+      operationId: get
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SandwichDTO'
+        "500":
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /id/{sandwich_id}:
+    get:
+      operationId: getIdSandwichId
+      parameters:
+      - name: sandwich_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SandwichDTO'
+        "500":
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /id/{sandwich_id}/price:
+    get:
+      operationId: getIdSandwichIdPrice
+      parameters:
+      - name: sandwich_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: number
+                format: float
+        "400":
+          description: BadRequest
+        "500":
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /id/{sandwich_id}/ingredients:
+    get:
+      operationId: getIdSandwichIdIngredients
+      parameters:
+      - name: sandwich_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
+        "400":
+          description: BadRequest
+        "500":
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /name/{sandwich_id}:
+    get:
+      operationId: getNameSandwichId
+      parameters:
+      - name: sandwich_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SandwichDTO'
+        "500":
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /name/{sandwich_id}/price:
+    get:
+      operationId: getNameSandwichIdPrice
+      parameters:
+      - name: sandwich_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: number
+                format: float
+        "400":
+          description: BadRequest
+        "500":
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /name/{sandwich_id}/ingredients:
+    get:
+      operationId: getNameSandwichIdIngredients
+      parameters:
+      - name: sandwich_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
+        "400":
+          description: BadRequest
+        "500":
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /create:
+    post:
+      operationId: postCreate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sandwich'
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+        "500":
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /{sandwich_id}:
+    put:
+      operationId: putSandwichId
+      parameters:
+      - name: sandwich_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Ok
+          content:
+            text/plain:
+              schema:
+                type: string
+        "500":
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+    delete:
+      operationId: deleteSandwichId
+      parameters:
+      - name: sandwich_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Ok
+          content:
+            text/plain:
+              schema:
+                type: string
+        "500":
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+  /init:
+    get:
+      operationId: getInit
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: boolean
+        "500":
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+components:
+  schemas:
+    Sandwich:
+      required:
+      - descriptions
+      - designation
+      - ingredients
+      - sandwich_id
+      - selling_price
+      type: object
+      properties:
+        sandwich_id:
+          type: integer
+          format: int64
+        designation:
+          type: string
+        selling_price:
+          type: number
+          format: float
+        ingredients:
+          type: array
+          items:
+            type: integer
+            format: int64
+        descriptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Description'
+    Description:
+      required:
+      - content
+      - language
+      type: object
+      properties:
+        content:
+          type: string
+        language:
+          type: string
+    IngredientDTO:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+    SandwichDTO:
+      required:
+      - Descriptions
+      - IngredientsList
+      - Name
+      - Price
+      type: object
+      properties:
+        Name:
+          type: string
+        Price:
+          type: number
+          format: float
+        IngredientsList:
+          type: array
+          items:
+            $ref: '#/components/schemas/IngredientDTO'
+        Descriptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Description'
