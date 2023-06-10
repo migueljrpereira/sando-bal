@@ -33,11 +33,10 @@ isolated function createTable() returns boolean {
 
     //Creation of table
     sql:ParameterizedQuery createDbQuery = `CREATE TABLE Sandwich (
-                                            sandwich_id INT NOT NULL,
+                                            sandwich_id SERIAL PRIMARY KEY,
                                             designation VARCHAR(255),
                                             selling_price FLOAT,
-                                            is_active BOOLEAN DEFAULT TRUE,
-                                            PRIMARY KEY (sandwich_id)
+                                            is_active BOOLEAN DEFAULT TRUE
                                             );
 
                                             CREATE TABLE SandwichIngredients (
@@ -80,11 +79,17 @@ isolated function getAllSandwiches() returns Sandwich[]|error {
     return sandwiches;
 }
 
-isolated function getSandwich(int sandwichId) returns Sandwich?|error {
+isolated function getSandwich(int|string token) returns Sandwich|error {
 
-    sql:ParameterizedQuery selectSandoQuery = `SELECT * FROM sandwich WHERE sandwich_id = ${sandwichId} AND is_active = TRUE`;
+    sql:ParameterizedQuery selectSandoQueryInitial = `SELECT * FROM sandwich`;
+    sql:ParameterizedQuery selectSandoQueryWhere;
+    if token is int {
+        selectSandoQueryWhere = `WHERE sandwich_id = ${token} AND is_active = TRUE`;
+    } else {
+        selectSandoQueryWhere = `WHERE designation = ${token} AND is_active = TRUE`;
+    }
 
-    stream<Sandwich, sql:Error?> sandwichStream = dbClient->query(selectSandoQuery);
+    stream<Sandwich, sql:Error?> sandwichStream = dbClient->query(sql:queryConcat(selectSandoQueryInitial, selectSandoQueryWhere));
 
     record {|Sandwich value;|}|error? result = sandwichStream.next();
 
@@ -96,32 +101,39 @@ isolated function getSandwich(int sandwichId) returns Sandwich?|error {
     }
 }
 
-isolated function createSandwich(Sandwich sandwich) returns int|error {
-    //CREATE SANDWICH
-    sql:ParameterizedQuery createSandwichQuery = `INSERT INTO sandwich (sandwich_id, designation, selling_price) 
-                                                VALUES (${sandwich.sandwich_id}, ${sandwich.designation}, ${sandwich.selling_price})`;
+isolated function createSandwich(CreateSandwichDTO command) returns int|error {
 
-    sql:ExecutionResult result = check dbClient->execute(createSandwichQuery);
+    if getSandwich(command.designation) is Sandwich {
+        return error("Sandwich already exists");
+    }
+
+    //CREATE SANDWICH
+    sql:ParameterizedQuery createSandwichQuery = `INSERT INTO sandwich ( designation, selling_price) 
+                                                VALUES ( ${command.designation}, ${command.selling_price})`;
+
+    var result = check dbClient->execute(createSandwichQuery);
+    
+    var createdId = result.lastInsertId;
 
     //CREATE INGREDIENT
-    from int ingredient_id in sandwich.ingredients
+    from int ingredient_id in command.ingredients
     do {
         if existsIngredient(ingredient_id) {
             sql:ParameterizedQuery createSandIngQuery = `INSERT INTO SandwichIngredients (sandwich_id, ingredient_id) 
-                                                VALUES (${sandwich.sandwich_id}, ${ingredient_id})`;
+                                                VALUES (${createdId}, ${ingredient_id})`;
 
             sql:ExecutionResult _ = check dbClient->execute(createSandIngQuery);
-        }else{
-            sql:ParameterizedQuery deleteSandIngQuery = `DELETE FROM sandwich WHERE sandwich_id = ${sandwich.sandwich_id};`;
+        } else {
+            sql:ParameterizedQuery deleteSandIngQuery = `DELETE FROM sandwich WHERE sandwich_id = ${createdId};`;
             sql:ExecutionResult _ = check dbClient->execute(deleteSandIngQuery);
         }
     };
 
     //CREATE DESCRIPTIONS
-    from Description desc in sandwich.descriptions
+    from Description desc in command.descriptions
     do {
         sql:ParameterizedQuery createSandDescQuery = `INSERT INTO SandwichDescriptions (sandwich_id, content, language) 
-                                                VALUES (${sandwich.sandwich_id}, ${desc.content}, ${desc.language})`;
+                                                VALUES (${createdId}, ${desc.content}, ${desc.language})`;
 
         sql:ExecutionResult _ = check dbClient->execute(createSandDescQuery);
     };

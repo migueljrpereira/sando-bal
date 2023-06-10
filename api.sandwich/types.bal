@@ -1,9 +1,18 @@
+import ballerina/http;
+
 //API OUTPUT OBJECTS
 type SandwichDTO record{
     string Name;
     float Price;
     IngredientDTO[] IngredientsList = [];
     Description[] Descriptions = [];
+};
+
+type CreateSandwichDTO record {
+    string designation;
+    float selling_price;
+    int[] ingredients = [];
+    Description[] descriptions = [];
 };
 
 type IngredientDTO record {|
@@ -27,4 +36,10 @@ type Ingredient record {|
 type Description record {|
     string content;
     string language;
+|};
+
+//ERRORS
+
+type SandoBadRequest record {|
+    *http:BadRequest;
 |};

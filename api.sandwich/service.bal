@@ -1,24 +1,61 @@
 import ballerina/http;
 
 service /sandwich on new http:Listener(2020) {
-    isolated resource function get .() returns SandwichDTO[]|error {
-        var list = check getAllSandwiches();
-        SandwichDTO[] result = [];
-        foreach Sandwich sando in list {
-            result.push(buildDto(sando));
+    isolated resource function get .() returns Sandwich[]|error {
+        return check getAllSandwiches();
+    }
+
+    //GET by IDS
+    isolated resource function get id/[int sandwich_id]() returns Sandwich|error {
+        return check getSandwich(sandwich_id);
+    }
+
+    isolated resource function get id/[int sandwich_id]/price() returns float|SandoBadRequest|error {
+        var sando = getSandwich(sandwich_id);
+        if sando is Sandwich {
+            return sando.selling_price;
         }
+
+        SandoBadRequest result = {body: "Error on getting price"};
         return result;
     }
 
-    isolated resource function get [int sandwich_id]() returns SandwichDTO?|error {
-        var sando = check getSandwich(sandwich_id);
+    isolated resource function get id/[string sandwich_id]/ingredients() returns int[]|SandoBadRequest|error {
+        var sando = getSandwich(sandwich_id);
         if sando is Sandwich {
-            return buildDto(sando);
+            return sando.ingredients;
         }
-        return ();
+
+        SandoBadRequest result = {body: "Error on getting ingredient list"};
+        return result;
     }
 
-    isolated resource function post .(Sandwich sandwich) returns int|error {
+    //GET by NAMES
+    isolated resource function get name/[string sandwich_id]() returns Sandwich|error {
+        return check getSandwich(sandwich_id);
+    }
+
+    isolated resource function get name/[string sandwich_id]/price() returns float|SandoBadRequest|error {
+        var sando = getSandwich(sandwich_id);
+        if sando is Sandwich {
+            return sando.selling_price;
+        }
+
+        SandoBadRequest result = {body: "Error on getting price"};
+        return result;
+    }
+
+    isolated resource function get name/[string sandwich_id]/ingredients() returns int[]|SandoBadRequest|error {
+        var sando = getSandwich(sandwich_id);
+        if sando is Sandwich {
+            return sando.ingredients;
+        }
+
+        SandoBadRequest result = {body: "Error on getting ingredient list"};
+        return result;
+    }
+
+    isolated resource function post create(CreateSandwichDTO sandwich) returns int|error {
         return check createSandwich(sandwich);
     }
 
