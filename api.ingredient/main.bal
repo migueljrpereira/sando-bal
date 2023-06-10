@@ -32,11 +32,11 @@ isolated function createTable() returns boolean {
             return true;
         }
     }
+    
     //Creation of table
     sql:ParameterizedQuery createDbQuery = `CREATE TABLE Ingredient (
-                                            ingredient_id INT NOT NULL,
-                                            name VARCHAR(255),
-                                            PRIMARY KEY (ingredient_id)
+                                            ingredient_id SERIAL PRIMARY KEY,
+                                            name VARCHAR(255)
                                             );`;
 
     sql:ExecutionResult|sql:Error result = dbClient->execute(createDbQuery);
@@ -63,13 +63,13 @@ isolated function getAllIngredients() returns Ingredient[]|error {
     return ingredients;
 }
 
-isolated function getIngredient(int ingredientId) returns Ingredient?|error {
+isolated function getIngredient(int ingredientId) returns Ingredient|error {
 
     sql:ParameterizedQuery selectIngredientQuery = `SELECT * FROM Ingredient WHERE ingredient_id = ${ingredientId}`;
 
     stream<Ingredient, sql:Error?> ingredientStream = dbClient->query(selectIngredientQuery);
 
-    record {|Ingredient value;|}|error? result =  ingredientStream.next();
+    record {|Ingredient value;|}|error? result = ingredientStream.next();
 
     _ = check ingredientStream.close();
     if result is record {|Ingredient value;|} {
@@ -79,14 +79,36 @@ isolated function getIngredient(int ingredientId) returns Ingredient?|error {
     }
 }
 
-isolated function createIngredient(Ingredient ingredient) returns int|error {
-    //CREATE Ingredient
-    sql:ParameterizedQuery createIngredientQuery = `INSERT INTO Ingredient (ingredient_id, name) 
-                                                VALUES (${ingredient.ingredient_id}, ${ingredient.name})`;
+isolated function getIngredientByName(string name) returns Ingredient|error {
 
-    sql:ExecutionResult result = check dbClient->execute(createIngredientQuery);
+    sql:ParameterizedQuery selectIngredientQuery = `SELECT * FROM Ingredient WHERE name = ${name}`;
 
-    return <int>result.affectedRowCount;
+    stream<Ingredient, sql:Error?> ingredientStream = dbClient->query(selectIngredientQuery);
+
+    record {|Ingredient value;|}|error? result = ingredientStream.next();
+
+    _ = check ingredientStream.close();
+    if result is record {|Ingredient value;|} {
+        return result.value;
+    } else {
+        return error("Ingredient not found");
+    }
+}
+
+isolated function createIngredient(string name) returns int|error {
+    if getIngredientByName(name) is error {
+
+        //CREATE Ingredient
+        sql:ParameterizedQuery createIngredientQuery = `INSERT INTO Ingredient (name) 
+                                                VALUES (${name})`;
+
+        sql:ExecutionResult result = check dbClient->execute(createIngredientQuery);
+
+        return <int>result.affectedRowCount;
+
+    } else {
+        return error("Ingredient already exisits");
+    }
 }
 
 isolated function bootstrap() returns error? {
@@ -102,6 +124,7 @@ isolated function bootstrap() returns error? {
     ];
 
     foreach Ingredient item in list {
-        _ = check createIngredient(item);
+        int|error res = createIngredient(item.name);
+        io:println(res);
     }
 }
