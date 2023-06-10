@@ -1,0 +1,7 @@
+[container.image]
+repository="migueljrpereira" # Docker hub name
+name="sandobal-api-reservation" # container name
+tag="latest"
+
+[settings]
+buildImage=false # you can make this false if you don't want to build the image and you just need the Dockerfile
