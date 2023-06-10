@@ -1,5 +1,49 @@
 version: '3.3'
 services:
+  # # API GATEWAY_____________
+  api-gateway:
+    container_name: order-api
+    image: sandobal-api-order:latest
+    build:
+      context: api.order/target/docker/sandobal_order_api/
+      dockerfile: Dockerfile
+    networks:
+      - servicenet
+      - publicnet
+    ports:
+      - 9090:9090
+    restart: always
+  # # ORDERS SERVICE _____________
+  order-ms:
+    container_name: order-api
+    image: sandobal-api-order:latest
+    build:
+      context: api.order/target/docker/sandobal_order_api/
+      dockerfile: Dockerfile
+    networks:
+      - ordernet
+      - servicenet
+    ports:
+      #- 2020:2020
+    restart: always
+    links:
+      - order-db
+    depends_on:
+      - order-db
+  order-db:
+    container_name: order-data
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      # - 2029:5432
+    networks:
+      - ordernet
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=order
+    volumes:
+      - order-db:/var/lib/postgresql/data
   # # SANDWICH SERVICE _____________
   sando-ms:
     container_name: sandwich-api
@@ -7,6 +51,9 @@ services:
     build:
       context: api.sandwich/target/docker/sandobal_sandwich_api/
       dockerfile: Dockerfile
+    networks:
+      - sandwichnet
+      - servicenet
     ports:
       #- 2020:2020
     restart: always
@@ -19,7 +66,9 @@ services:
     image: postgres:latest
     restart: unless-stopped
     ports:
-      - 2029:5432
+      # - 2029:5432
+    networks:
+      - sandwichnet
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -33,6 +82,9 @@ services:
     build:
       context: api.ingredient/target/docker/sandobal_ingredient_api/
       dockerfile: Dockerfile
+    networks:
+      - ingredientnet
+      - servicenet
     ports:
       # - 2030:2030
     restart: always
@@ -44,8 +96,10 @@ services:
     container_name: ingredient-data
     image: postgres:latest
     restart: unless-stopped
+    networks:
+      - ingredientnet
     ports:
-      - 2039:5432
+      # - 2039:5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -55,3 +109,9 @@ services:
 volumes:
   sando-db:
   ingredient_db:
+networks:
+  ordernet: 
+  sandwichnet:
+  ingredientnet:
+  servicenet:
+  publicnet:
