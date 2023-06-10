@@ -1,6 +1,7 @@
 reset: down build up
 
 build:
+	# cd types && bal build && bal pack && bal push --repository=local
 	cd api.sandwich && bal build
 	cd api.ingredient && bal build
 	docker-compose build

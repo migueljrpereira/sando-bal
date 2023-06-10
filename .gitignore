@@ -59,3 +59,5 @@ gradle-app.setting
 /.protos_backup
 /.protos
 package-lock.json
+
+types/

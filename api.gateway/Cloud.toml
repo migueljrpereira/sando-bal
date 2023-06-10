@@ -1,6 +1,6 @@
 [container.image]
 repository="migueljrpereira" # Docker hub name
-name="sandobal-service" # container name
+name="sando-gateway" # container name
 tag="latest"
 
 [settings]

@@ -2,8 +2,8 @@ version: '3.3'
 services:
   # # API GATEWAY_____________
   api-gateway:
-    container_name: order-api
-    image: sandobal-api-order:latest
+    container_name: api-gateway
+    image: sandobal-api-gateway:latest
     build:
       context: api.order/target/docker/sandobal_order_api/
       dockerfile: Dockerfile
@@ -24,7 +24,7 @@ services:
       - ordernet
       - servicenet
     ports:
-      #- 2020:2020
+      - 2020:2020
     restart: always
     links:
       - order-db
@@ -35,7 +35,7 @@ services:
     image: postgres:latest
     restart: unless-stopped
     ports:
-      # - 2029:5432
+      - 2029:5432
     networks:
       - ordernet
     environment:
@@ -55,7 +55,7 @@ services:
       - sandwichnet
       - servicenet
     ports:
-      #- 2020:2020
+      - 2020:2020
     restart: always
     links:
       - sando-db
@@ -66,7 +66,7 @@ services:
     image: postgres:latest
     restart: unless-stopped
     ports:
-      # - 2029:5432
+      - 2029:5432
     networks:
       - sandwichnet
     environment:
@@ -86,7 +86,7 @@ services:
       - ingredientnet
       - servicenet
     ports:
-      # - 2030:2030
+     - 2030:2030
     restart: always
     links:
       - ingredient_db
@@ -99,7 +99,7 @@ services:
     networks:
       - ingredientnet
     ports:
-      # - 2039:5432
+     - 2039:5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
