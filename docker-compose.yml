@@ -5,7 +5,7 @@ services:
     container_name: api-gateway
     image: sandobal-api-gateway:latest
     build:
-      context: api.order/target/docker/sandobal_order_api/
+      context: api.gateway/target/docker/sandobal_gateway/
       dockerfile: Dockerfile
     networks:
       - servicenet
@@ -13,37 +13,37 @@ services:
     ports:
       - 9090:9090
     restart: always
-  # # ORDERS SERVICE _____________
-  order-ms:
-    container_name: order-api
-    image: sandobal-api-order:latest
+  # # RESERVATIONS SERVICE _____________
+  reservation-ms:
+    container_name: reservation-api
+    image: sandobal-api-reservation:latest
     build:
-      context: api.order/target/docker/sandobal_order_api/
+      context: api.reservation/target/docker/sandobal_reservation_api/
       dockerfile: Dockerfile
     networks:
-      - ordernet
+      - reservationnet
       - servicenet
     ports:
-      - 2020:2020
+      - 2040:2040
     restart: always
     links:
-      - order-db
+      - reservation-db
     depends_on:
-      - order-db
-  order-db:
-    container_name: order-data
+      - reservation-db
+  reservation-db:
+    container_name: reservation-data
     image: postgres:latest
     restart: unless-stopped
     ports:
-      - 2029:5432
+      - 2049:5432
     networks:
-      - ordernet
+      - reservationnet
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=order
+      - POSTGRES_DB=reservation
     volumes:
-      - order-db:/var/lib/postgresql/data
+      - reservation-db:/var/lib/postgresql/data
   # # SANDWICH SERVICE _____________
   sando-ms:
     container_name: sandwich-api
@@ -76,7 +76,7 @@ services:
     volumes:
       - sando-db:/var/lib/postgresql/data
   # # INGREDIENT SERVICE _____________
-  ingredient_ms:
+  ingredient-ms:
     container_name: ingredient-api
     image: sandobal-api-ingredient:latest
     build:
@@ -89,10 +89,10 @@ services:
      - 2030:2030
     restart: always
     links:
-      - ingredient_db
+      - ingredient-db
     depends_on:
-      - ingredient_db
-  ingredient_db:
+      - ingredient-db
+  ingredient-db:
     container_name: ingredient-data
     image: postgres:latest
     restart: unless-stopped
@@ -105,12 +105,13 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=ingredient
     volumes:
-      - ingredient_db:/var/lib/postgresql/data
+      - ingredient-db:/var/lib/postgresql/data
 volumes:
   sando-db:
-  ingredient_db:
+  ingredient-db:
+  reservation-db:
 networks:
-  ordernet: 
+  reservationnet: 
   sandwichnet:
   ingredientnet:
   servicenet:

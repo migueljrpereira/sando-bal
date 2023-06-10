@@ -4,10 +4,11 @@ import ballerina/sql;
 import ballerina/io;
 import ballerina/time;
 
-configurable string host = "reservation-db";
-configurable string username = "postgres";
-configurable string password = "postgres";
-configurable string database = "reservation";
+configurable string host = "";
+configurable string username = "";
+configurable string password = "";
+configurable string database = "";
+
 final postgresql:Client dbClient = check new (host, username, password, database);
 
 //DEBUG CONFIG

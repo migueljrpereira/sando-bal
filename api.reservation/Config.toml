@@ -1,0 +1,4 @@
+host = 'reservation-db'
+username = 'postgres'
+password = 'postgres'
+database = 'reservation'

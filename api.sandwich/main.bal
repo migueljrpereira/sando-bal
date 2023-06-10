@@ -81,7 +81,7 @@ isolated function getAllSandwiches() returns Sandwich[]|error {
 
 isolated function getSandwich(int|string token) returns Sandwich|error {
 
-    sql:ParameterizedQuery selectSandoQueryInitial = `SELECT * FROM sandwich`;
+    sql:ParameterizedQuery selectSandoQueryInitial = `SELECT * FROM sandwich `;
     sql:ParameterizedQuery selectSandoQueryWhere;
     if token is int {
         selectSandoQueryWhere = `WHERE sandwich_id = ${token} AND is_active = TRUE`;

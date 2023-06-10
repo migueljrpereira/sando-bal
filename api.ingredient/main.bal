@@ -7,7 +7,7 @@ configurable string username = "postgres";
 configurable string password = "postgres";
 configurable string database = "ingredient";
 
-configurable string host = "ingredient_db";
+configurable string host = "ingredient-db";
 final postgresql:Client dbClient = check new (host, username, password, database);
 
 type Ingredient record {

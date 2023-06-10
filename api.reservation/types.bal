@@ -53,7 +53,7 @@ public type Description record {|
     string language;
 |};
 
-type CreateReservationItem record {
+public type CreateReservationItem record {
     int sandwich_id;
     int quantity;
     float item_price;

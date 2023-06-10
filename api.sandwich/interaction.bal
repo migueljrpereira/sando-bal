@@ -1,7 +1,7 @@
 import ballerina/http;
 import ballerina/io;
 
-isolated http:Client clientEndpoint = check new ("http://ingredient_ms:2030", {httpVersion: "2.0"});
+isolated http:Client clientEndpoint = check new ("http://ingredient-ms:2030", {httpVersion: "2.0"});
 
 isolated function getIngredient(int|string id) returns Ingredient? {
     //io:println("api-sandwich | DBG | Calling /ingredient/" + id.toString());
