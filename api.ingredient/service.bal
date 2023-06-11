@@ -1,6 +1,6 @@
 import ballerina/http;
 
-service /ingredient on new http:Listener(2030) {
+service / on new http:Listener(2030) {
     resource isolated function get .() returns Ingredient[]|error {
         return check getAllIngredients();
     }
@@ -29,8 +29,8 @@ service /ingredient on new http:Listener(2030) {
         return list;
     }
 
-    resource isolated function post .(string name) returns int|error {
-        return check createIngredient(name);
+    resource isolated function post create(CreateIngredientDTO dto) returns int|error {
+        return check createIngredient(dto.name);
     }
 
     resource isolated function get init() returns boolean|error? {
@@ -40,3 +40,7 @@ service /ingredient on new http:Listener(2030) {
         return true;
     }
 }
+
+type CreateIngredientDTO record {
+    string name;
+};

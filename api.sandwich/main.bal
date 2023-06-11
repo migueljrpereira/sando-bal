@@ -3,15 +3,14 @@ import ballerinax/postgresql;
 import ballerina/sql;
 import ballerina/io;
 
-configurable string host = "sando-db";
-configurable string username = "postgres";
-configurable string password = "postgres";
-configurable string database = "sandwich";
-final postgresql:Client dbClient = check new (host, username, password, database);
+configurable string host = "";
+configurable string username = "";
+configurable string password = "";
+configurable string database = "";
+configurable int port = 5432;
 
 //DEBUG CONFIG
-//configurable int port = 2029;
-//final postgresql:Client dbClient = check new ("localhost", username, password, database, port);
+final postgresql:Client dbClient = check new (host, username, password, database, port);
 
 public function main() {
     _ = createTable();
@@ -104,7 +103,8 @@ isolated function getSandwich(int|string token) returns Sandwich|error {
 isolated function createSandwich(CreateSandwichDTO command) returns int|error {
 
     if getSandwich(command.designation) is Sandwich {
-        return error("Sandwich already exists");
+        io:println("Sandwich already exists");
+        return -1;
     }
 
     //CREATE SANDWICH
@@ -126,6 +126,7 @@ isolated function createSandwich(CreateSandwichDTO command) returns int|error {
         } else {
             sql:ParameterizedQuery deleteSandIngQuery = `DELETE FROM sandwich WHERE sandwich_id = ${createdId};`;
             sql:ExecutionResult _ = check dbClient->execute(deleteSandIngQuery);
+            return -1;
         }
     };
 
@@ -185,12 +186,13 @@ isolated function composeSandwich(Sandwich sando) returns Sandwich|error {
 
 isolated function bootstrap() returns error? {
     Sandwich[] list = [
-        {selling_price: 5.99, designation: "Tosta Mista", sandwich_id: 1, ingredients: [1, 2], descriptions: [{content: "Sande tostada com fiambre e queijo", language: "pt-PT"}, {content: "Grilled sandwich with ham and cheese", language: "en-US"}]},
-        {selling_price: 5.99, designation: "Americana", sandwich_id: 2, ingredients: [1, 2, 3, 4, 5], descriptions: [{content: "sande fresca com ovo e fiambre", language: "pt-PT"}, {content: "Fresh sandwich with ham and egg", language: "en-US"}]},
+        {selling_price: 2.99, designation: "Tosta Mista", sandwich_id: 1, ingredients: [1, 2], descriptions: [{content: "Sande tostada com fiambre e queijo", language: "pt-PT"}, {content: "Grilled sandwich with ham and cheese", language: "en-US"}]},
+        {selling_price: 7.99, designation: "Americana", sandwich_id: 2, ingredients: [1, 2, 3, 4, 5], descriptions: [{content: "sande fresca com ovo e fiambre", language: "pt-PT"}, {content: "Fresh sandwich with ham and egg", language: "en-US"}]},
         {selling_price: 5.99, designation: "Mig Back", sandwich_id: 3, ingredients: [7, 5, 8, 6, 3, 2], descriptions: [{content: "Reinterpretação do famoso hamburger", language: "pt-PT"}, {content: "Remake of the famous burger", language: "en-US"}]}
     ];
 
-    foreach Sandwich item in list {
+    CreateSandwichDTO[] commandList = from Sandwich {descriptions,designation,ingredients,selling_price} in list select {descriptions,designation,ingredients,selling_price};
+    foreach CreateSandwichDTO item in commandList {
         _ = check createSandwich(item);
     }
 }

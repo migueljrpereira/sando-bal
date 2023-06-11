@@ -1,3 +1,7 @@
+configurable string ingredientApiUrl = ?;
+configurable string sandwichApiUrl = ?;
+configurable string reservationApiUrl = ?;
+
 # The Orchestrator class of the API Gateway, wich also implements the aggregator pattern for DTO consolidation
 public isolated class Orchestrator {
 
@@ -9,10 +13,10 @@ public isolated class Orchestrator {
 
     public isolated function init() returns error? {
 
-        self.ingredientEndpoint = check new ();
-        self.sandwichEndpoint = check new ();
+        self.ingredientEndpoint = check new ({}, ingredientApiUrl);
+        self.sandwichEndpoint = check new ({}, sandwichApiUrl);
+        //self.reservationEndpoint = check new ({}, reservationApiUrl);
 
-        // ordersEndpoint = check new ("http://orders_ms:2040", {httpVersion: "2.0"});
         // customerEndpoint = check new ("http://customer_ms:2050", {httpVersion: "2.0"});
     }
 

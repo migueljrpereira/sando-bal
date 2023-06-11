@@ -1,0 +1,4 @@
+host = "ingredient-db"
+username = "postgres"
+password = "postgres"
+database = "ingredient"

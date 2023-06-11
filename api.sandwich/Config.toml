@@ -1,0 +1,9 @@
+username = "postgres"
+password = "postgres"
+database = "sandwich"
+host = "sando-db"
+#host = "localhost"
+#port = 2029
+
+ingredientUri = "http://ingredient-ms:2030"
+#ingredientUri = "http://localhost:2030"

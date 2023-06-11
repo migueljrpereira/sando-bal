@@ -1,6 +1,6 @@
 import ballerina/http;
 
-service /reservations on new http:Listener(2040) {
+service / on new http:Listener(2040) {
     isolated resource function get .() returns Reservation[]|error {
         return check getAllReservations();
     }

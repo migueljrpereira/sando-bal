@@ -1,6 +1,6 @@
 import ballerina/http;
 
-service /sandwich on new http:Listener(2020) {
+service / on new http:Listener(2020) {
     isolated resource function get .() returns Sandwich[]|error {
         return check getAllSandwiches();
     }
@@ -75,27 +75,4 @@ service /sandwich on new http:Listener(2020) {
 
         return true;
     }
-}
-
-# Description
-#
-# + sando - Parameter Description
-# + return - Return Value Description
-isolated function buildDto(Sandwich sando) returns SandwichDTO {
-    SandwichDTO result = {
-                            Name: sando.designation,
-                            Descriptions: sando.descriptions,
-                            IngredientsList: [],
-                            Price: sando.selling_price
-                        };
-
-    foreach int id in sando.ingredients {
-        Ingredient? ing = getIngredient(id);
-        if ing is Ingredient
-        {
-            result.IngredientsList.push({name: ing.name});
-        }
-    }
-
-    return result;
 }

@@ -1,23 +1,12 @@
 import ballerina/http;
 
-//API OUTPUT OBJECTS
-type SandwichDTO record{
-    string Name;
-    float Price;
-    IngredientDTO[] IngredientsList = [];
-    Description[] Descriptions = [];
-};
-
-type CreateSandwichDTO record {
+type CreateSandwichDTO record {|
     string designation;
     float selling_price;
     int[] ingredients = [];
     Description[] descriptions = [];
-};
-
-type IngredientDTO record {|
-    string name;
 |};
+
 
 //DOMAIN OBJECTS
 type Sandwich record {

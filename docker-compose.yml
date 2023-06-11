@@ -13,6 +13,8 @@ services:
     ports:
       - 9090:9090
     restart: always
+    volumes:
+      - ./api.gateway/Config.toml:/home/ballerina/Config.toml
   # # RESERVATIONS SERVICE _____________
   reservation-ms:
     container_name: reservation-api
@@ -30,6 +32,8 @@ services:
       - reservation-db
     depends_on:
       - reservation-db
+    volumes:
+      - ./api.reservation/Config.toml:/home/ballerina/Config.toml
   reservation-db:
     container_name: reservation-data
     image: postgres:latest
@@ -61,6 +65,8 @@ services:
       - sando-db
     depends_on:
       - sando-db
+    volumes:
+      - ./api.sandwich/Config.toml:/home/ballerina/Config.toml
   sando-db:
     container_name: sandwich-data
     image: postgres:latest
@@ -92,6 +98,8 @@ services:
       - ingredient-db
     depends_on:
       - ingredient-db
+    volumes:
+      - ./api.ingredient/Config.toml:/home/ballerina/Config.toml
   ingredient-db:
     container_name: ingredient-data
     image: postgres:latest

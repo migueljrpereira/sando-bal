@@ -1,0 +1,4 @@
+sandwichApiUrl = "http://sandwich-ms:2020"
+ingredientApiUrl ="http://ingredient-ms:2030"
+reservationApiUrl = "http://reservation-ms:2040"
+#customersApiUrl = "http://reservation-ms:2050"

@@ -1,26 +1,27 @@
 import ballerina/http;
+import ballerina/log;
 import ballerina/io;
 
-isolated http:Client clientEndpoint = check new ("http://ingredient-ms:2030", {httpVersion: "2.0"});
+configurable string ingredientUri = ?;
+isolated http:Client clientEndpoint = check new (ingredientUri);
 
 isolated function getIngredient(int|string id) returns Ingredient? {
-    //io:println("api-sandwich | DBG | Calling /ingredient/" + id.toString());
+    log:printDebug("Calling /ingredient/" + id.toString());
     Ingredient|http:ClientError? response;
 
     lock {
         if id is int {
-            response = clientEndpoint->/ingredient/[id]/id;
+            response = clientEndpoint->/ingredient/id/[id];
         } else {
-            response = clientEndpoint->/ingredient/[id]/name;
+            response = clientEndpoint->/ingredient/name/[id];
         }
     }
 
     if response is Ingredient {
-        //io:println("api-sandwich | INF | Got Ingredient " + response.name);
         return response;
     } else {
         io:println("api-sandwich | ERR | Ingredient id=" + id.toString() + " does not exist. Check sandwich definition.");
-        //io:println(response);
+        log:printError("failure to get ingredient " + id.toString(), response);
         return ();
     }
 };
