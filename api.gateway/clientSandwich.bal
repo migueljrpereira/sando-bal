@@ -37,13 +37,13 @@ public isolated client class SandwichClient {
 
     #
     # + return - Ok 
-    resource isolated function get .() returns SandwichDTO[]|error {
+    resource isolated function get .() returns Sandwich[]|error {
         return check self.sandCli->/;
     }
 
     #
     # + return - Ok 
-    resource isolated function get id/[int sandwich_id]() returns SandwichDTO|error {
+    resource isolated function get id/[int sandwich_id]() returns Sandwich|error {
         return check self.sandCli->/id/[sandwich_id];
     }
 
@@ -61,7 +61,7 @@ public isolated client class SandwichClient {
 
     #
     # + return - Ok 
-    resource isolated function get name/[string sandwich_id]() returns SandwichDTO|error {
+    resource isolated function get name/[string sandwich_id]() returns Sandwich|error {
         return check self.sandCli->/name/[sandwich_id];
     }
 

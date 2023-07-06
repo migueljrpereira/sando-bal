@@ -2,7 +2,7 @@ import ballerina/time;
 import ballerina/http;
 
 //API OUTPUT OBJECTS
-public type SandwichDTO record{
+public type SandwichDTO record {
     string Name;
     float Price;
     IngredientDTO[] IngredientsList = [];
@@ -20,6 +20,37 @@ public type CreateSandwichDTO record {
     Description[] descriptions = [];
 };
 
+type ReservationDTO record {|
+    time:Utc CreatedAt;
+    time:Utc ETA;
+    ReservationItem[] Details;
+|};
+
+type ReservationItemDTO record {|
+    SandwichDTO Sandwich;
+    int Quantity;
+    float Price;
+|};
+
+public type CreateReservationItem record {
+    int sandwich_id;
+    int quantity;
+    float item_price;
+};
+
+public type CreateReservationDTO record {|
+    CreateReservationItem[] items;
+|};
+
+public type ReservationRequestItemDTO record {|
+    string Name;
+    int quantity;
+|};
+
+public type ReservationRequestResponse record {|
+    int Response;
+    string Message;
+|};
 
 //DOMAIN OBJECTS
 public type Sandwich record {
@@ -46,7 +77,6 @@ public type Description record {|
     string language;
 |};
 
-
 type Reservation record {|
     int reservation_id;
     time:Utc reservation_time;
@@ -60,18 +90,6 @@ type ReservationItem record {|
     int sandwich_id;
     int quantity;
     float item_price;
-|};
-
-type ReservationDTO record {|
-    time:Utc CreatedAt;
-    time:Utc ETA;
-    ReservationItem[] Details;
-|};
-
-type ReservationItemDTO record {|
-    SandwichDTO Sandwich;
-    int Quantity;
-    float Price;
 |};
 
 //ERRORS

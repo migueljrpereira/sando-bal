@@ -7,15 +7,15 @@ public isolated class Orchestrator {
 
     private final IngredientClient ingredientEndpoint;
     private final SandwichClient sandwichEndpoint;
+    private final ReservationClient reservationEndpoint;
 
-    // http:Client ordersEndpoint;
     // http:Client customerEndpoint;
 
     public isolated function init() returns error? {
 
         self.ingredientEndpoint = check new ({}, ingredientApiUrl);
         self.sandwichEndpoint = check new ({}, sandwichApiUrl);
-        //self.reservationEndpoint = check new ({}, reservationApiUrl);
+        self.reservationEndpoint = check new ({}, reservationApiUrl);
 
         // customerEndpoint = check new ("http://customer_ms:2050", {httpVersion: "2.0"});
     }
@@ -49,6 +49,14 @@ public isolated class Orchestrator {
         return result;
     }
 
+    isolated function getSandwich(int|string token) returns Sandwich|error {
+        if token is int {
+            return check self.sandwichEndpoint->/id/[token];
+        } else {
+            return check self.sandwichEndpoint->/name/[token];
+        }
+    }
+
     isolated function getIngredient(int|string token) returns Ingredient|error {
         if token is int {
             return check self.ingredientEndpoint->/id/[token];
@@ -75,6 +83,22 @@ public isolated class Orchestrator {
         }
 
         return result;
+    }
+
+    isolated function createReservation(ReservationRequestItemDTO[] payload) returns ReservationRequestResponse|error {
+        CreateReservationDTO request = {items: []};
+
+        foreach ReservationRequestItemDTO item in payload {
+            Sandwich sando = check self.getSandwich(item.Name);
+            request.items.push({
+                item_price: sando.selling_price,
+                quantity: item.quantity,
+                sandwich_id: sando.sandwich_id
+            });
+        }
+
+        int res = check self.reservationEndpoint->/create.post(request);
+        return {Response: res, Message: "Your Reservation is number " + res.toString()};
     }
 
 }
