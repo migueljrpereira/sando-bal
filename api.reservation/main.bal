@@ -4,12 +4,13 @@ import ballerina/sql;
 import ballerina/io;
 import ballerina/time;
 
-configurable string host = "";
-configurable string username = "";
-configurable string password = "";
-configurable string database = "";
+configurable string host = ?;
+configurable string username = ?;
+configurable string password = ?;
+configurable string database = ?;
+configurable int port = 5432;
 
-final postgresql:Client dbClient = check new (host, username, password, database);
+final postgresql:Client dbClient = check new (host, username, password, database, port);
 
 //DEBUG CONFIG
 //configurable int port = 2029;
@@ -54,6 +55,8 @@ isolated function createTable() returns boolean {
 
     if result is sql:Error {
         io:println("api-Reservation | ERR | Unable to create table Reservation");
+        io:println(result.cause());
+        io:println(result.message());
         return false;
     }
 
@@ -71,6 +74,7 @@ isolated function getAllReservations() returns Reservation[]|error {
             Reservations.push(compSando);
         };
 
+    _ = check ReservationStream.close();
     return Reservations;
 }
 
@@ -81,6 +85,7 @@ isolated function getReservation(int ReservationId) returns Reservation|error {
     stream<Reservation, sql:Error?> ReservationStream = dbClient->query(selectSandoQuery);
 
     record {|Reservation value;|}|error? result = ReservationStream.next();
+    _ = check ReservationStream.close();
 
     if result is record {|Reservation value;|} {
         Reservation sando = check composeReservation(result.value);
@@ -93,7 +98,7 @@ isolated function getReservation(int ReservationId) returns Reservation|error {
 isolated function createReservation(CreateReservationDTO dto) returns int|error {
     //CREATE Reservation
     sql:ParameterizedQuery createReservationQuery = `INSERT INTO Reservation (reservation_time, delivery_time) 
-                                                VALUES (${time:utcToString(time:utcNow())}, ${time:utcToString(time:utcAddSeconds(time:utcNow(),1800))})`;
+                                                VALUES (${time:utcToString(time:utcNow())}, ${time:utcToString(time:utcAddSeconds(time:utcNow(), 1800))})`;
 
     sql:ExecutionResult result = check dbClient->execute(createReservationQuery);
     int reservationId = <int>result.lastInsertId;
@@ -106,7 +111,7 @@ isolated function createReservation(CreateReservationDTO dto) returns int|error 
                                                 VALUES (${reservationId}, ${item.sandwich_id}, ${item.quantity}, ${item.item_price})`;
 
             sql:ExecutionResult _ = check dbClient->execute(createSandIngQuery);
-        }else{
+        } else {
             sql:ParameterizedQuery deleteSandIngQuery = `DELETE FROM Reservation WHERE reservation_id = ${reservationId};`;
             sql:ExecutionResult _ = check dbClient->execute(deleteSandIngQuery);
         }
@@ -125,5 +130,6 @@ isolated function composeReservation(Reservation reserve) returns Reservation|er
             reserve.items.push(value);
         };
 
+    _ = check itemsIdStream.close();
     return reserve;
 }

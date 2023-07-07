@@ -8,7 +8,7 @@ public isolated client class SandwichClient {
     # + config - The configurations to be used when initializing the `connector` 
     # + serviceUrl - URL of the target service 
     # + return - An error if connector initialization failed 
-    public isolated function init(ConnectionConfig config = {}, string serviceUrl = "http://localhost:2020/sandwich") returns error? {
+    public isolated function init(ConnectionConfig config = {}, string serviceUrl = "http://localhost:2020/") returns error? {
         http:ClientConfiguration httpClientConfig = {httpVersion: config.httpVersion, timeout: config.timeout, forwarded: config.forwarded, poolConfig: config.poolConfig, compression: config.compression, circuitBreaker: config.circuitBreaker, retryConfig: config.retryConfig, validation: config.validation};
         do {
             if config.http1Settings is ClientHttp1Settings {
@@ -20,6 +20,7 @@ public isolated client class SandwichClient {
             }
             if config.cache is http:CacheConfig {
                 httpClientConfig.cache = check config.cache.ensureType(http:CacheConfig);
+                httpClientConfig.cache.isShared = true;
             }
             if config.responseLimits is http:ResponseLimitConfigs {
                 httpClientConfig.responseLimits = check config.responseLimits.ensureType(http:ResponseLimitConfigs);

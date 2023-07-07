@@ -70,7 +70,7 @@ service / on new http:Listener(2020) {
     }
 
     isolated resource function get init() returns boolean|error {
-        _ = createTable();
+        _ = check createTable();
         _ = check bootstrap();
 
         return true;

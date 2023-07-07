@@ -1,4 +1,5 @@
-host = 'reservation-db'
-username = 'postgres'
-password = 'postgres'
-database = 'reservation'
+username = "postgres"
+password = "postgres"
+database = "reservation"
+host = "reservation-db"
+#port = 2049

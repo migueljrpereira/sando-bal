@@ -12,11 +12,11 @@ configurable int port = 5432;
 //DEBUG CONFIG
 final postgresql:Client dbClient = check new (host, username, password, database, port);
 
-public function main() {
-    _ = createTable();
+public function main() returns error? {
+    _ = check createTable();
 };
 
-isolated function createTable() returns boolean {
+isolated function createTable() returns boolean|error {
 
     //query instantiation error
     stream<Sandwich, sql:Error?> dbExistsResult = dbClient->query(`SELECT * FROM sandwich;`);
@@ -60,7 +60,7 @@ isolated function createTable() returns boolean {
         io:println("api-sandwich | ERR | Unable to create table Sandwich");
         return false;
     }
-
+    
     return true;
 }
 
@@ -75,6 +75,7 @@ isolated function getAllSandwiches() returns Sandwich[]|error {
             sandwiches.push(compSando);
         };
 
+    _ = check sandwichStream.close();
     return sandwiches;
 }
 
@@ -91,6 +92,8 @@ isolated function getSandwich(int|string token) returns Sandwich|error {
     stream<Sandwich, sql:Error?> sandwichStream = dbClient->query(sql:queryConcat(selectSandoQueryInitial, selectSandoQueryWhere));
 
     record {|Sandwich value;|}|error? result = sandwichStream.next();
+
+    _ = check sandwichStream.close();
 
     if result is record {|Sandwich value;|} {
         Sandwich sando = check composeSandwich(result.value);
@@ -112,7 +115,7 @@ isolated function createSandwich(CreateSandwichDTO command) returns int|error {
                                                 VALUES ( ${command.designation}, ${command.selling_price})`;
 
     var result = check dbClient->execute(createSandwichQuery);
-    
+
     var createdId = result.lastInsertId;
 
     //CREATE INGREDIENT
@@ -174,12 +177,14 @@ isolated function composeSandwich(Sandwich sando) returns Sandwich|error {
         do {
             sando.ingredients.push(value.ingredient_id);
         };
+    _ = check ingredientIdStream.close();
 
     stream<Description, sql:Error?> descriptionsStream = dbClient->query(getDescQuery);
     check from Description desc in descriptionsStream
         do {
             sando.descriptions.push(desc);
         };
+    _ = check descriptionsStream.close();
 
     return sando;
 }
@@ -191,7 +196,8 @@ isolated function bootstrap() returns error? {
         {selling_price: 5.99, designation: "Mig Back", sandwich_id: 3, ingredients: [7, 5, 8, 6, 3, 2], descriptions: [{content: "Reinterpretação do famoso hamburger", language: "pt-PT"}, {content: "Remake of the famous burger", language: "en-US"}]}
     ];
 
-    CreateSandwichDTO[] commandList = from Sandwich {descriptions,designation,ingredients,selling_price} in list select {descriptions,designation,ingredients,selling_price};
+    CreateSandwichDTO[] commandList = from Sandwich {descriptions, designation, ingredients, selling_price} in list
+        select {descriptions, designation, ingredients, selling_price};
     foreach CreateSandwichDTO item in commandList {
         _ = check createSandwich(item);
     }

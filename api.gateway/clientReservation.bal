@@ -20,6 +20,7 @@ public isolated client class ReservationClient {
             }
             if config.cache is http:CacheConfig {
                 httpClientConfig.cache = check config.cache.ensureType(http:CacheConfig);
+                httpClientConfig.cache.isShared = true;
             }
             if config.responseLimits is http:ResponseLimitConfigs {
                 httpClientConfig.responseLimits = check config.responseLimits.ensureType(http:ResponseLimitConfigs);
