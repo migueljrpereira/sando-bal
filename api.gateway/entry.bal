@@ -9,7 +9,7 @@ service /sandwich on controllerListener {
         return check orca.createSandwich(sand);
     }
 
-    resource function get [string Name]() returns SandwichDTO|error{
+    resource function get [string Name]() returns SandwichDTO|error {
         return check orca.buildSandwichDto(check orca.getSandwich(Name));
     }
 }
@@ -22,18 +22,15 @@ service /ingredient on controllerListener {
 }
 
 service /reservation on controllerListener {
-    isolated resource function post create(ReservationRequestItemDTO[] payload) returns ReservationRequestResponse {
+    isolated resource function post create(ReservationRequestItemDTO[] payload) returns ReservationRequestResponse|SandoBadRequest {
         ReservationRequestResponse|error result = orca.createReservation(payload);
 
         if result is error {
-            return 
-            {
-                Response: -1,
-                Message: "Failure creating reservation, check Sandwich names\n"
-            };
+            SandoBadRequest resp = {body: "Error creating reservation: " + result.message()};
+            return resp;
+        } else {
+            return result;
         }
-
-        return result;
     }
 }
 

@@ -50,6 +50,7 @@ public type ReservationRequestItemDTO record {|
 public type ReservationRequestResponse record {|
     int Response;
     string Message;
+    float Cost;
 |};
 
 //DOMAIN OBJECTS

@@ -13,8 +13,6 @@ configurable int port = 5432;
 final postgresql:Client dbClient;
 
 isolated function init() returns error? {
-    string dbName = "reservation";
-
     //Create initial client to check database existence
     postgresql:Client|sql:Error dbCreateClient = new (host, username, password, "postgres", port);
     if dbCreateClient is sql:Error {

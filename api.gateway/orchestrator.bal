@@ -109,7 +109,22 @@ public isolated class Orchestrator {
 
         log:printInfo("Saving reservation");
         int res = check self.reservationEndpoint->/create.post(request);
-        return {Response: res, Message: "Your Reservation is number " + res.toString()};
+
+        float cost = 0.0;
+
+        foreach float partial in (from CreateReservationItem item in request.items
+        select item.quantity * item.item_price)
+        {
+            cost += partial;
+        }
+
+        ReservationRequestResponse response = {
+            Response: res,
+            Message: "Reservation created!",
+            Cost: cost
+        };
+
+        return response;
     }
 
 }
