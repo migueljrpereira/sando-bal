@@ -1,7 +1,7 @@
 import ballerinax/postgresql.driver as _;
 import ballerinax/postgresql;
 import ballerina/sql;
-import ballerina/io;
+import ballerina/log;
 import ballerina/time;
 
 configurable string host = ?;
@@ -10,35 +10,38 @@ configurable string password = ?;
 configurable string database = ?;
 configurable int port = 5432;
 
-final postgresql:Client dbClient = check new (host, username, password, database, port);
+final postgresql:Client dbClient;
 
-//DEBUG CONFIG
-//configurable int port = 2029;
-//final postgresql:Client dbClient = check new ("localhost", username, password, database, port);
+isolated function init() returns error? {
+    string dbName = "reservation";
 
-public function main() {
-    _ = createTable();
-};
-
-isolated function createTable() returns boolean {
-
-    //query instantiation error
-    stream<Reservation, sql:Error?> dbExistsResult = dbClient->query(`SELECT * FROM reservation;`);
-
-    if !(dbExistsResult.next() is sql:Error) {
-        record {|Reservation value;|}|error? checkNameExists = dbExistsResult.next();
-        if checkNameExists is record {|Reservation value;|} {
-
-            io:println("api-Reservation | INF | Database exists");
-            return true;
-        }
+    //Create initial client to check database existence
+    postgresql:Client|sql:Error dbCreateClient = new (host, username, password, "postgres", port);
+    if dbCreateClient is sql:Error {
+        log:printError(dbCreateClient.message(), dbCreateClient);
+        return;
     }
 
+    //Check database existence
+    sql:ParameterizedQuery checkDb = `SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower(reservation);`;
+    sql:ExecutionResult|sql:Error checkDbExists = dbCreateClient->execute(checkDb);
+    if checkDbExists is sql:Error {
+        //Create database
+        sql:ExecutionResult|sql:Error createDb = dbCreateClient->execute(`CREATE DATABASE reservation`);
+        if createDb is sql:Error {
+            log:printError(createDb.message(), createDb);
+        }
+
+    }
+
+    _ = check dbCreateClient.close();
+
+    dbClient = check new (host, username, password, database, port);
     //Creation of table
     sql:ParameterizedQuery createDbQuery = `CREATE TABLE Reservation (
                                             reservation_id SERIAL PRIMARY KEY,
-                                            reservation_time INT NOT NULL,
-                                            delivery_time INT NOT NULL
+                                            reservation_time VARCHAR(255) NOT NULL,
+                                            delivery_time VARCHAR(255) NOT NULL
                                             );
 
                                             CREATE TABLE ReservationItems (
@@ -54,13 +57,12 @@ isolated function createTable() returns boolean {
     sql:ExecutionResult|sql:Error result = dbClient->execute(createDbQuery);
 
     if result is sql:Error {
-        io:println("api-Reservation | ERR | Unable to create table Reservation");
-        io:println(result.cause());
-        io:println(result.message());
-        return false;
-    }
+        log:printError("Unable to create table Reservation: " + result.message(), result, result.stackTrace())
+;
+    } else {
+        log:printInfo("Database created!");
 
-    return true;
+    }
 }
 
 isolated function getAllReservations() returns Reservation[]|error {
@@ -96,9 +98,12 @@ isolated function getReservation(int ReservationId) returns Reservation|error {
 }
 
 isolated function createReservation(CreateReservationDTO dto) returns int|error {
+
+    string timeStart = time:utcToString(time:utcNow());
+    string timeEnd = time:utcToString(time:utcAddSeconds(time:utcNow(), 1800));
     //CREATE Reservation
     sql:ParameterizedQuery createReservationQuery = `INSERT INTO Reservation (reservation_time, delivery_time) 
-                                                VALUES (${time:utcToString(time:utcNow())}, ${time:utcToString(time:utcAddSeconds(time:utcNow(), 1800))})`;
+                                                VALUES (${timeStart}, ${timeEnd})`;
 
     sql:ExecutionResult result = check dbClient->execute(createReservationQuery);
     int reservationId = <int>result.lastInsertId;

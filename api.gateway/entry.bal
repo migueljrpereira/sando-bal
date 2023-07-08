@@ -29,7 +29,7 @@ service /reservation on controllerListener {
             return 
             {
                 Response: -1,
-                Message: "Failure creating reservation, chack Sandwich names"
+                Message: "Failure creating reservation, check Sandwich names\n"
             };
         }
 

@@ -1,17 +1,17 @@
 import ballerina/http;
 import ballerina/io;
 
-isolated http:Client clientEndpoint = check new ("http://sando-ms:2030", {httpVersion: "2.0"});
+isolated http:Client clientEndpoint = check new ("http://sando-ms:2020", {httpVersion: "2.0"});
 
 isolated function getSandwich(int id) returns Sandwich? {
     Sandwich|http:ClientError? response;
 
     lock {
-        response = clientEndpoint->get("/sandwich/" + id.toString(), (), Sandwich);
+        response = clientEndpoint->get("/id/" + id.toString(), (), Sandwich);
     }
 
     if response is Sandwich {
-        io:println("api-sandwich | INF | Got Sandwich " + response.toJsonString());
+        //io:println("api-sandwich | INF | Got Sandwich " + response.toJsonString());
         return response;
     } else {
         io:println("api-sandwich | ERR | Sandwich id=" + id.toString() + " does not exist. Check sandwich definition.");

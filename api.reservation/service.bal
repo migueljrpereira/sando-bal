@@ -17,9 +17,7 @@ service / on new http:Listener(2040) {
         return check createReservation(obj);
     }
 
-    isolated resource function get init() returns boolean|error {
-        _ = createTable();
-
-        return true;
+    isolated resource function get init() returns boolean {        
+        return !(init() is error);
     }
 }

@@ -1,3 +1,5 @@
+import ballerina/log;
+
 configurable string ingredientApiUrl = ?;
 configurable string sandwichApiUrl = ?;
 configurable string reservationApiUrl = ?;
@@ -78,8 +80,12 @@ public isolated class Orchestrator {
         };
 
         foreach int id in sando.ingredients {
-            Ingredient ing = check self.getIngredient(id);
-            result.IngredientsList.push({name: ing.name});
+            Ingredient|error ing = self.getIngredient(id);
+            if ing is error {
+                log:printError("There was an error: ", ing, ing.stackTrace(), id = id);
+            } else {
+                result.IngredientsList.push({name: ing.name});
+            }
         }
 
         return result;
@@ -89,14 +95,19 @@ public isolated class Orchestrator {
         CreateReservationDTO request = {items: []};
 
         foreach ReservationRequestItemDTO item in payload {
-            Sandwich sando = check self.getSandwich(item.Name);
-            request.items.push({
-                item_price: sando.selling_price,
-                quantity: item.quantity,
-                sandwich_id: sando.sandwich_id
-            });
+            Sandwich|error sando = self.getSandwich(item.Name);
+            if sando is error {
+                log:printError("There was an error: ", sando, sando.stackTrace(), name = item.Name);
+            } else {
+                request.items.push({
+                    item_price: sando.selling_price,
+                    quantity: item.quantity,
+                    sandwich_id: sando.sandwich_id
+                });
+            }
         }
 
+        log:printInfo("Saving reservation");
         int res = check self.reservationEndpoint->/create.post(request);
         return {Response: res, Message: "Your Reservation is number " + res.toString()};
     }

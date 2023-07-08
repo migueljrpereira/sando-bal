@@ -45,13 +45,13 @@ public isolated client class ReservationClient {
     #
     # + return - Ok 
     resource isolated function get [int reservation_id]() returns ReservationDTO|error {
-        return check self.resCli->/id/[reservation_id];
+        return check self.resCli->/[reservation_id];
     }
 
     #
     # + return - Created 
     resource isolated function post create(CreateReservationDTO payload) returns int|error {
-        return check self.resCli->/create.post(payload);
+        return check self.resCli->/.post(payload);
     }
 
     #
