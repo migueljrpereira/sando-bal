@@ -61,3 +61,6 @@ gradle-app.setting
 package-lock.json
 
 types/
+*.vs/
+*bin/
+*obj/
