@@ -1,0 +1,42 @@
+version: '3.3'
+services:
+  reservation-db:
+    container_name: reservation-data
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - 2049:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=reservation
+    volumes:
+      - reservation-db:/var/lib/postgresql/data
+  sando-db:
+    container_name: sandwich-data
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - 2029:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=sandwich
+    volumes:
+      - sando-db:/var/lib/postgresql/data
+  ingredient-db:
+    container_name: ingredient-data
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - 2039:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=ingredient
+    volumes:
+      - ingredient-db:/var/lib/postgresql/data
+volumes:
+  sando-db:
+  ingredient-db:
+  reservation-db:
