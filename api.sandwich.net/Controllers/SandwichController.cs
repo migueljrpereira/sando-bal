@@ -61,7 +61,7 @@ namespace api.sandwich.net.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> createSandwich(CreateSandwichDTO dto)
+        public async Task<IActionResult> createSandwich([FromBody] CreateSandwichDTO dto)
         {
             Sandwich newsand = new()
             {
