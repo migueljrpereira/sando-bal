@@ -2,8 +2,6 @@
 using api.sandwich.net.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata.Ecma335;
-using System.Xml.Linq;
 
 namespace api.sandwich.net.Controllers
 {

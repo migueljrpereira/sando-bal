@@ -375,7 +375,7 @@
           <stringProp name="filename"></stringProp>
         </ResultCollector>
         <hashTree/>
-        <ResultCollector guiclass="RespTimeGraphVisualizer" testclass="ResultCollector" testname="Ballerina Gateway Spike Test 250 Users Response Time Graph">
+        <ResultCollector guiclass="RespTimeGraphVisualizer" testclass="ResultCollector" testname="Ballerina Gateway Spike Test 1000 Users Response Time Graph">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
             <name>saveConfig</name>
@@ -411,7 +411,7 @@
           </objProp>
           <stringProp name="filename"></stringProp>
           <stringProp name="RespTimeGraph.interval">100</stringProp>
-          <stringProp name="RespTimeGraph.graphtitle">Ballerina Gateway Spike Test 250 Users Response Time Graph</stringProp>
+          <stringProp name="RespTimeGraph.graphtitle">Ballerina Gateway Spike Test 1000 Users Response Time Graph</stringProp>
           <intProp name="RespTimeGraph.legendsize">4</intProp>
           <stringProp name="RespTimeGraph.yaxisscaleincrement">50</stringProp>
         </ResultCollector>
