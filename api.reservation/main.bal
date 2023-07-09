@@ -55,8 +55,7 @@ isolated function init() returns error? {
     sql:ExecutionResult|sql:Error result = dbClient->execute(createDbQuery);
 
     if result is sql:Error {
-        log:printError("Unable to create table Reservation: " + result.message(), result, result.stackTrace())
-;
+        log:printError("Unable to create table Reservation: " + result.message().toJsonString());
     } else {
         log:printInfo("Database created!");
 
