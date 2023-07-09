@@ -13,11 +13,11 @@ public partial class SandwichContext : DbContext
     {
     }
 
-    public virtual DbSet<Sandwich> Sandwiches { get; set; }
+    public virtual DbSet<Sandwich> Sandwiches { get; set; } = null!;
 
-    public virtual DbSet<Sandwichdescription> Sandwichdescriptions { get; set; }
+    public virtual DbSet<Sandwichdescription> Sandwichdescriptions { get; set; } = null!;
 
-    public virtual DbSet<Sandwichingredient> Sandwichingredients { get; set; }
+    public virtual DbSet<Sandwichingredient> Sandwichingredients { get; set; } = null!;
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
