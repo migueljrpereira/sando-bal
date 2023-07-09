@@ -8,7 +8,7 @@ using System.Xml.Linq;
 namespace api.sandwich.net.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("")]
     public class SandwichController : ControllerBase
     {
         private readonly SandwichContext data;
@@ -76,7 +76,7 @@ namespace api.sandwich.net.Controllers
 
             if ((await data.SaveChangesAsync()) > 0)
             {
-                return Created("",$"Sandwich {newsand.Designation} id: {newsand.SandwichId} was created.");
+                return Created("", $"Sandwich {newsand.Designation} id: {newsand.SandwichId} was created.");
             }
             else
             {
@@ -125,7 +125,30 @@ namespace api.sandwich.net.Controllers
 
         }
 
+        [HttpDelete("delete/test")]
+        public async Task<IActionResult> deleteTestData()
+        {
+            var listSand = await data.Sandwiches.Where(s => s.Designation != null && s.Designation.Contains("Test")).ToListAsync();
 
+            foreach (var sand in listSand)
+            {
+                foreach (var item in data.Sandwichingredients.Where(i => i.SandwichId == sand.SandwichId).ToList())
+                {
+                    sand.Sandwichingredients.Remove(item);
+                }
+
+                foreach (var item in data.Sandwichdescriptions.Where(i => i.SandwichId == sand.SandwichId).ToList())
+                {
+                    sand.Sandwichdescriptions.Remove(item);
+                }
+
+            }
+
+            data.Sandwiches.RemoveRange(listSand);
+
+            return Ok(await data.SaveChangesAsync());
+
+        }
     }
 }
 

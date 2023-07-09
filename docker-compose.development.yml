@@ -38,6 +38,8 @@ services:
     container_name: reservation-data
     image: postgres:latest
     restart: unless-stopped
+    ports:
+      - 2049:5432
     networks:
       - reservationnet
     environment:
@@ -69,10 +71,10 @@ services:
     container_name: sandwich-data
     image: postgres:latest
     restart: unless-stopped
-    networks:
-      - sandwichnet
     ports:
       - 2029:5432
+    networks:
+      - sandwichnet
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -90,7 +92,7 @@ services:
       - ingredientnet
       - servicenet
     ports:
-      - 2030:2030
+     - 2030:2030
     restart: always
     links:
       - ingredient-db
@@ -104,6 +106,8 @@ services:
     restart: unless-stopped
     networks:
       - ingredientnet
+    ports:
+     - 2039:5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres

@@ -55,7 +55,7 @@ public partial class SandwichContext : DbContext
 
             entity.HasOne(d => d.Sandwich).WithMany(p => p.Sandwichdescriptions)
                 .HasForeignKey(d => d.SandwichId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("sandwichdescriptions_sandwich_id_fkey");
         });
 
@@ -71,8 +71,9 @@ public partial class SandwichContext : DbContext
 
             entity.HasOne(d => d.Sandwich).WithMany(p => p.Sandwichingredients)
                 .HasForeignKey(d => d.SandwichId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("sandwichingredients_sandwich_id_fkey");
+
         });
 
 
