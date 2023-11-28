@@ -15,7 +15,6 @@ service /sandwich on controllerListener {
 }
 
 service /ingredient on controllerListener {
-
     resource function get all() returns IngredientDTO[]|error {
         return check orca.ReadAllIngredients();
     }
