@@ -1,0 +1,5 @@
+Label,# Samples,Average,Min,Max,Std. Dev.,Error %,Throughput,Received KB/sec,Sent KB/sec,Avg. Bytes
+HTTP GET - All Ingredients,299,50,0,181,37.99,0.000%,14.61317,4.22,1.86,296.0
+HTTP GET - Sandwich by Name,153,111,0,297,82.28,0.000%,7.39631,2.75,1.00,381.0
+HTTP POST - Create Reservation,134,939,0,1784,727.45,0.000%,6.46937,1.31,2.06,208.0
+TOTAL,586,269,0,1784,507.03,0.000%,27.84113,8.10,4.81,298.1

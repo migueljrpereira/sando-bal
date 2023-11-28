@@ -24,7 +24,7 @@ hs_err_pid*
 
 # generated files
 target
-results
+
 .ballerina
 /gen
 /compiler/ballerina-lang/src/main/resources/grammar/BallerinaLexer.tokens

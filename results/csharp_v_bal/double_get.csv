@@ -1,0 +1,6 @@
+Label,# Samples,Average,Min,Max,Std. Dev.,Error %,Throughput,Received KB/sec,Sent KB/sec,Avg. Bytes
+BAL GET - Sandwich by Id,578,5,0,9,0.72,0.000%,9.83478,3.77,1.16,393.0
+BAL GET - Sandwich by Name,566,4,0,8,0.68,0.000%,9.88733,3.81,1.29,395.0
+C# GET - Sandwich by Id,549,3,0,5,0.55,0.000%,9.63276,2.72,1.14,289.0
+C# GET - Sandwich by Name,540,2,0,11,0.65,0.000%,9.38918,2.67,1.23,291.0
+TOTAL,2233,3,0,11,1.39,0.000%,37.99493,12.74,4.73,343.3
